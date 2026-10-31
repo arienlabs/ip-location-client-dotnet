@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>Arienlabs.IpLocationClient</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Arienlabs</Authors>
+    <Description>Klient .NET 10 dla IP Location API: lokalizacja IPv4/IPv6, ASN, batch i stan usługi.</Description>
+    <PackageTags>ip;geolocation;asn;arienlabs;httpclient</PackageTags>
+    <PackageProjectUrl>https://github.com/arienlabs/ip-location-client-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/arienlabs/ip-location-client-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>arienlabs.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <IsTrimmable>true</IsTrimmable>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
+    <None Include="../../assets/arienlabs.png" Pack="true" PackagePath="/" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+</Project>
