@@ -6,6 +6,14 @@ A typed HTTP client for [Arienlabs IP Location API](https://github.com/arienlabs
 
 ## Install
 
+Install from [NuGet.org](https://www.nuget.org/packages/Arienlabs.IpLocationClient/1.0.0):
+
+```sh
+dotnet add package Arienlabs.IpLocationClient --version 1.0.0
+```
+
+### Alternative: GitHub Releases
+
 Download the package from [GitHub Releases](https://github.com/arienlabs/ip-location-client-dotnet/releases). Public release assets do not require a GitHub or NuGet.org account.
 
 ```powershell
@@ -17,7 +25,7 @@ dotnet nuget add source "$PWD/vendor/arienlabs" --name ArienlabsLocal
 dotnet add package Arienlabs.IpLocationClient --version 1.0.0
 ```
 
-The package targets **.NET 10**. Keep the normal NuGet.org source enabled for Microsoft dependencies; downloading those dependencies does not require an account. You can put the local feed in your application's `NuGet.Config` instead of changing user-level NuGet sources. Release assets contain `.nupkg`, `.snupkg` and SHA-256 checksums. Publication to NuGet.org is planned separately; GitHub Releases is the initial distribution channel.
+The package targets **.NET 10**. Keep the normal NuGet.org source enabled for Microsoft dependencies; downloading packages does not require an account. You can put the local feed in your application's `NuGet.Config` instead of changing user-level NuGet sources. Release assets contain `.nupkg`, `.snupkg` and SHA-256 checksums. Both NuGet.org and GitHub Releases distribute the same version.
 
 ## Dependency injection
 
