@@ -107,6 +107,20 @@ Tests cover the full wire contract, quoted/numeric/zero coordinates, Polish cult
 
 ## Publishing to NuGet.org
 
+### Package signatures
+
+NuGet.org automatically adds a repository signature and timestamp to published packages. No author certificate was purchased or registered for this project. Repository signing is distinct from an Arienlabs author signature, and Trusted Publishing authenticates publication rather than signing the package bytes.
+
+Verify a package downloaded from NuGet.org:
+
+```sh
+dotnet nuget verify Arienlabs.IpLocationClient.1.0.0.nupkg --all
+```
+
+The original GitHub Release assets are not author-signed; their `SHA256SUMS` file applies to those exact assets. NuGet.org repository signing can change the ZIP bytes, so its downloaded archive can have a different whole-file hash while the DLL, README and icon remain identical.
+
+### Trusted Publishing setup
+
 GitHub authentication does not authenticate a publisher to NuGet.org. Configure [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing) on the NuGet.org account that will own `Arienlabs.IpLocationClient`:
 
 1. Sign in to NuGet.org, open your profile menu and select **Trusted Publishing**.
