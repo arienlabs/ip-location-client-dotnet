@@ -1,0 +1,82 @@
+name: Publikacja NuGet.org
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Wersja istniejącego wydania GitHub, np. 1.0.0
+        required: true
+        default: "1.0.0"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nuget-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Sprawdź numer wydania
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version || github.event.release.tag_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${REQUESTED_VERSION#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo 'Nieprawidłowa wersja pakietu.' >&2
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+      - name: Pobierz źródła wydania
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.version.outputs.tag }}
+          persist-credentials: false
+      - name: Przygotuj .NET 10
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - name: Przetestuj źródła wydania
+        run: dotnet test Arienlabs.IpLocationClient.sln -c Release --nologo
+      - name: Pobierz dokładnie pakiety udostępnione w GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.version.outputs.tag }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --dir artifacts \
+            --pattern "Arienlabs.IpLocationClient.$PACKAGE_VERSION.nupkg" \
+            --pattern "Arienlabs.IpLocationClient.$PACKAGE_VERSION.snupkg" \
+            --pattern SHA256SUMS
+          cd artifacts
+          sha256sum --check SHA256SUMS
+      - name: Uzyskaj krótkotrwały klucz NuGet przez OIDC
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+      - name: Opublikuj tę samą paczkę na NuGet.org
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet nuget push "artifacts/Arienlabs.IpLocationClient.$PACKAGE_VERSION.nupkg" \
+            --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          printf 'Pakiet: Arienlabs.IpLocationClient %s\n' "$PACKAGE_VERSION" >> "$GITHUB_STEP_SUMMARY"

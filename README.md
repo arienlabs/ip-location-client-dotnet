@@ -104,7 +104,7 @@ GitHub authentication does not authenticate a publisher to NuGet.org. Configure 
 1. Sign in to NuGet.org, open your profile menu and select **Trusted Publishing**.
 2. Add a GitHub policy: owner `arienlabs`, repository `ip-location-client-dotnet`, workflow file `publish.yml` (file name only), no environment restriction.
 3. Permit creating and updating `Arienlabs.IpLocationClient`.
-4. Set the GitHub repository variable `NUGET_USER` to your NuGet.org **profile name**, not your email address.
-5. Run the release workflow for the desired version after the workflow has been installed. The workflow exchanges GitHub OIDC identity for a short-lived NuGet API key.
+4. Set the GitHub repository variable `NUGET_USER` to your NuGet.org **profile name**, not your email address. This repository is configured for `arienlabs`.
+5. In GitHub Actions, run **Publikacja NuGet.org** with version `1.0.0` (or another existing release). New published GitHub releases also trigger it automatically. The workflow tests the tagged source, downloads the existing `.nupkg` and `.snupkg` release assets, verifies SHA-256 checksums and publishes the exact same package through OIDC. It does not rebuild a different package with the same version.
 
 Do not commit API keys or credentials. Instructions and release artifacts can be public; publisher credentials cannot.
